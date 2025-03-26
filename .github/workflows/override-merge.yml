@@ -1,0 +1,40 @@
+name: approve-and-merge-dev-pr
+on:
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  auto-approve-and-merge:
+    runs-on: ubuntu-latest
+    if: github.actor == 'CDSCDP-AUTONP'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name jayendrapawar
+          git config user.email jayendrapawarofficial@gmail.com
+
+      - name: Approve Pull Request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.pulls.createReview({
+              owner: context.payload.repository.owner.login,
+              repo: context.payload.repository.name,
+              pull_number: context.payload.pull_request.number,
+              event: 'APPROVE'
+            })
+
+      - name: Perform Merge Operations
+        run: |
+          git checkout main
+          git pull origin main
+          git checkout dev
+          git pull origin dev
+          git merge dev
+          git push origin main
