@@ -7,7 +7,6 @@ on:
 jobs:
   auto-approve-and-merge:
     runs-on: ubuntu-latest
-    if: github.actor == 'CDSCDP-AUTONP'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
